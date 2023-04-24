@@ -70,6 +70,15 @@ $ aws iam list-users
 aws cloudformation create-stack-set --stack-set-name my-stack-set --template-body file://stack1.yaml file://stack2.yaml
 ```
 
+```
+./create.sh hawa-network hawa-network.yml hawa-network-parameters.json
+```
+
+```
+./delete.sh hawa-network
+```
+
+
 In this example, my-stack-set is the name of the StackSet you want to create, and stack1.yaml and stack2.yaml are the names of the CloudFormation templates for each stack.
 Once you have created the StackSet, you can use the AWS CLI or the AWS Management Console to deploy the stacks in the accounts and regions you specify.
 
