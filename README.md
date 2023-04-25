@@ -55,7 +55,6 @@ $ aws --version
 - Step 2: Create an Access Key ID for IAM User with programmatic access via the AWS Console.
 
 - Step 3: Configure AWS CLI Tool with newly created keys of user and set 
-
 ```
 $ aws configure
 ```
@@ -65,25 +64,25 @@ $ aws configure
 $ aws iam list-users
 ```
 
-- Step 5: Run the create-stack-set command:
+- Step 5: Create the network stack for the High Availability Web App:
 ```
-aws cloudformation create-stack-set --stack-set-name my-stack-set --template-body file://stack1.yaml file://stack2.yaml
+$ ./create.sh hawa-network hawa-network.yml hawa-network-parameters.json
 ```
-
 ```
-./create.sh hawa-network hawa-network.yml hawa-network-parameters.json
-```
-
-```
-./delete.sh hawa-network
+$ ./create.sh hawa-server hawa-server.yml hawa-server-parameters.json
 ```
 
 
-In this example, my-stack-set is the name of the StackSet you want to create, and stack1.yaml and stack2.yaml are the names of the CloudFormation templates for each stack.
-Once you have created the StackSet, you can use the AWS CLI or the AWS Management Console to deploy the stacks in the accounts and regions you specify.
+- Step 6: Delete stack:
 
+```
+$ ./delete.sh hawa-server
+```
 
-- Step 6: Check if web app was deployed properly.
+```
+$ ./delete.sh hawa-network
+```
+
 
 ## Results<a name="results"></a>
 

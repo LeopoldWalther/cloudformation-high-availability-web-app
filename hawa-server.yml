@@ -10,7 +10,7 @@ Parameters:
 
 Resources:
 
-  LBSecGroup:
+  LoadBalancerSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http to our load balancer
@@ -48,6 +48,24 @@ Resources:
       - IpProtocol: tcp
         FromPort: 0
         ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+  JumpHostSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Jump Host to SSH to WebServers
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
         CidrIp: 0.0.0.0/0
 
   WebAppLaunchConfig:
@@ -96,7 +114,7 @@ Resources:
       - Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
       - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
       SecurityGroups:
-      - Ref: LBSecGroup
+      - Ref: LoadBalancerSecGroup
 
   Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
