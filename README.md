@@ -3,12 +3,14 @@ This folder provides the starter code forthe "ND9991 - C2- Infrastructure as Cod
 
 ### Table of Contents
 
-1. [Introduction](#intro)
-2. [Project Details](#details)
-3. [File Descriptions](#files)
-4. [How To Run](#execution)
-5. [Data Model](#model)
-6. [Licensing, Authors, and Acknowledgements](#licensing)
+- [Cloudformation High Availability Web App](#cloudformation-high-availability-web-app)
+    - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Project Details](#project-details)
+  - [File Descriptions ](#file-descriptions-)
+  - [How To Run](#how-to-run)
+  - [Results](#results)
+  - [Licensing, Authors, Acknowledgements](#licensing-authors-acknowledgements)
 
 ## Introduction<a name="intro"></a>
 
@@ -82,6 +84,36 @@ $ ./delete.sh hawa-server
 ```
 $ ./delete.sh hawa-network
 ```
+
+It is possible to ssh into the EC2 Web Server instances using a jump host. The jump host is another EC2 instance placed into one of the public subnets. The security group of the jump host allows incoming access from a configured IP to port 22 using a defined .pem file. Once connected via SSH to the jump host it is possible to connect with the jump host via SSH to the Web Server instances in the privat subnets, as the security groups allow instances in the private subnets to be accessed from within the same Virtual Private Cloud. Here the steps to connect to a EC2 Server Instance in the private subnets:
+
+- Step 1: Grant rights on local machine to .pem file
+```
+$ chmod 400 jumpHostKey.pem 
+```
+
+- Step 2: Safe copy the necessary .pem file from local machine to jump host:
+```
+$ scp -i jumpHostKey.pem privateSubnetInstanceKey.pem ec2-user@<public-ip4-jump-host>:/home/ec2-user/privateSubnetInstanceKey.pem 
+```
+
+- Step 3: SSH into jump host
+```
+$ ssh ec2-user@<public-ip4-jump-host> -i jumpHostKey.pem 
+```
+
+- Step 4: Grant rights on jump host to .pem file
+```
+$ chmod 400 privateSubnetInstanceKey.pem 
+```
+
+- Step 5: SSH into private EC2 Web Server instance
+```
+$ ssh ubuntu@<private-ip4-ec-instance> -i privateSubnetInstanceKey.pem 
+```
+
+The logs of the UserData scripts are at /var/log/cloud-init-output.log
+
 
 
 ## Results<a name="results"></a>
