@@ -12,8 +12,51 @@ Parameters:
         Description: An environment name that will be prefixed to resource names
         Type: String
 
+    S3BucketName:
+        Description: The unique identifier of the bucket containing the data to serve the Web App
+        Type: String
+
 Resources:
 
+  S3ReadOnlyEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 
+        !Sub ${EnvironmentName}-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+
+  S3ReadOnlyEC2Policies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: AmazonS3ReadOnlyAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: 
+          - s3:Get*
+          - s3:List*
+          Resource: 
+          - arn:aws:s3:::hawa-629476245943-bucket
+          - arn:aws:s3:::hawa-629476245943-bucket/*
+      Roles:
+      -  Ref: S3ReadOnlyEC2Role
+
+  WebAppIamProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: S3ReadOnlyEC2Role
 
   LoadBalancerSecGroup:
     Type: AWS::EC2::SecurityGroup
@@ -85,10 +128,9 @@ Resources:
           systemctl start apache2.service
           cd /var/www/html
           echo "it works! Udagram, Udacity" > index.html     
-      # ToDo: AMI ID of Ubuntu Linux machine. Too get one, try creating a VM from the web console. 
       ImageId: ami-0263e4deb427da90e
-      # ToDo: Change the key-pair name, as applicable to you. 
       KeyName: HighAvailabilityAppWebServers
+      IamInstanceProfile: !Ref WebAppIamProfile
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
@@ -110,7 +152,7 @@ Resources:
       TargetGroupARNs:
       - Ref: WebAppTargetGroup
 
-  WebAppLB:
+  WebAppLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Scheme: internet-facing
@@ -130,11 +172,11 @@ Resources:
         TargetGroupArn:
           Ref: WebAppTargetGroup
       LoadBalancerArn:
-        Ref: WebAppLB
+        Ref: WebAppLoadBalancer
       Port: '80'
       Protocol: HTTP
 
-  ALBListenerRule:
+  AppLoadBalancerListenerRule:
       Type: AWS::ElasticLoadBalancingV2::ListenerRule
       Properties:
         Actions:
@@ -162,10 +204,9 @@ Resources:
           Fn::Sub: "${EnvironmentName}-VPCID"
 
 Outputs: 
-  # This is also optional.
-  # Bonus points for useful outputs!
-  # for example, if you create a Load Balancer
-  # it's nice to output the URL to it here, so that we don't have to go to the console to get it.
+
   LoadBalancerURL:
-    Description: The DNSName of the load balancer
-    Value: !GetAtt WebAppLB.DNSName
+    Description: The DNSName or public URL of the load balancer
+    Value: !Join [ "", [ 'http://', !GetAtt WebAppLoadBalancer.DNSName ]]
+    Export:
+        Name: !Sub ${EnvironmentName}-LoadBalancer-DNSName

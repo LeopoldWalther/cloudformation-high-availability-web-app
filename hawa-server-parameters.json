@@ -2,5 +2,13 @@
 	{
 		"ParameterKey": "EnvironmentName",
 		"ParameterValue": "HighAvailabilityWebApp"
-	}
+	},
+
+	{
+        "ParameterKey" : "S3BucketName",
+        "ParameterValue" : "hawa-629476245943-bucket"
+    }
 ]
+
+
+
