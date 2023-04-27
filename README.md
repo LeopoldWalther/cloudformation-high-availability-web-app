@@ -3,21 +3,16 @@ This folder provides the starter code forthe "ND9991 - C2- Infrastructure as Cod
 
 ### Table of Contents
 
-- [Cloudformation High Availability Web App](#cloudformation-high-availability-web-app)
-    - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Project Details](#project-details)
-  - [File Descriptions ](#file-descriptions-)
-  - [How To Run](#how-to-run)
-  - [Results](#results)
-  - [Licensing, Authors, Acknowledgements](#licensing-authors-acknowledgements)
+- [Project Description](#project)
+- [Project Files](#files)
+- [How To Run](#run)
+- [Results](#results)
+- [Licensing, Authors, Acknowledgements](#licensing-authors-acknowledgements)
 
-## Introduction<a name="intro"></a>
+## Project Details<a name="project"></a>
 
 This project is part of the Udacity Nanodegree "Cloud DevOps Engineer".
 Goal is to apply the learned content about Infrastruce As Code (IAC) and AWS to develop a Cloudformation script that deploys a high availability web app.
-
-## Project Details<a name="details"></a>
 
 The deployment script creates the networking infrastructure as well as server infrastructure. The network infrastructure is build into a Virtual Private Network, which spreads over two Availability Zones containing each a Public Subnet and a Private Subnet. Two availability zones ensure high availability for the web app, even if one Availability Zone is down. The web app is served via EC2 instances in the private subnets. To allow the web app to scale elastically with higher inbound traffic, the EC2 instances serving the web app are placed into a EC2 Auto Scaling Group. An Internet Gateway allows incoming traffic on to be distributed to the different EC2 instances by the Elastic Load Balancer.
 
@@ -47,7 +42,9 @@ cloudformation-high-availability-web-app/
 
 
 ```
-## How To Run<a name="execution"></a>
+## How To Run<a name="run"></a>
+
+### Prepare
 
 - Step 1: Install the AWS CLI Tool on your machine. You can check if installed properly with:
 ```
@@ -66,24 +63,22 @@ $ aws configure
 $ aws iam list-users
 ```
 
+### Deploy Infrastructure
+
 - Step 5: Create the network stack for the High Availability Web App:
 ```
 $ ./create.sh hawa-network hawa-network.yml hawa-network-parameters.json
 ```
+
+### Deploy Servers
+
 ```
 $ ./create.sh hawa-server hawa-server.yml hawa-server-parameters.json
 ```
 
+### Inspect Servers
 
-- Step 6: Delete stack:
-
-```
-$ ./delete.sh hawa-server
-```
-
-```
-$ ./delete.sh hawa-network
-```
+#### Inspect private Servers using Jump Host
 
 It is possible to ssh into the EC2 Web Server instances using a jump host. The jump host is another EC2 instance placed into one of the public subnets. The security group of the jump host allows incoming access from a configured IP to port 22 using a defined .pem file. Once connected via SSH to the jump host it is possible to connect with the jump host via SSH to the Web Server instances in the privat subnets, as the security groups allow instances in the private subnets to be accessed from within the same Virtual Private Cloud. Here the steps to connect to a EC2 Server Instance in the private subnets:
 
@@ -114,6 +109,25 @@ $ ssh ubuntu@<private-ip4-ec-instance> -i privateSubnetInstanceKey.pem
 
 The logs of the UserData scripts are at /var/log/cloud-init-output.log
 
+#### Inspect private Servers using user-data script
+
+The User-Data script of the Web App Launch Configuration in this project contains a line which copies the logs of the private servers to the console (exec >>(/var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1). This allows to see the logs either using the aws web console EC2>Instances>(mark instance)>Actions>MonitorAndTroubleshoot>GetSystemLogs or via the aws cli:
+
+```
+$ aws ec2 get-console-output --instance-id i-0ab9802bd29642468
+```
+
+### Delete the instances and network
+
+- Step 6: Delete stack:
+
+```
+$ ./delete.sh hawa-server
+```
+
+```
+$ ./delete.sh hawa-network
+```
 
 
 ## Results<a name="results"></a>
