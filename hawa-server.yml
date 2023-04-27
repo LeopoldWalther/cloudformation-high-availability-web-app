@@ -122,18 +122,18 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          exec >>(/var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
           apt-get update -y
+          apt-get install unzip awscli -y
           apt-get install apache2 -y
           systemctl start apache2.service
           cd /var/www/html
           echo "it works! Udagram, Udacity" > index.html     
-      ImageId: ami-0263e4deb427da90e
+      ImageId: ami-0729e439b6769d6ab
       KeyName: HighAvailabilityAppWebServers
       IamInstanceProfile: !Ref WebAppIamProfile
       SecurityGroups:
       - Ref: WebServerSecGroup
-      InstanceType: t3.medium
+      InstanceType: t2.medium
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
