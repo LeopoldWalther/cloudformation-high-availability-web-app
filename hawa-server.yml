@@ -127,7 +127,9 @@ Resources:
           apt-get install apache2 -y
           systemctl start apache2.service
           cd /var/www/html
-          echo "it works! Udagram, Udacity" > index.html     
+          aws s3 cp s3://hawa-629476245943-bucket/website.zip .
+          unzip -o website.zip
+
       ImageId: ami-0729e439b6769d6ab
       KeyName: HighAvailabilityAppWebServers
       IamInstanceProfile: !Ref WebAppIamProfile
