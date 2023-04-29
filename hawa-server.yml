@@ -150,7 +150,7 @@ Resources:
       LaunchConfigurationName:
         Ref: WebAppLaunchConfig
       MinSize: '2'
-      MaxSize: '3'
+      MaxSize: '2'
       TargetGroupARNs:
       - Ref: WebAppTargetGroup
 
@@ -204,6 +204,30 @@ Resources:
       VpcId: 
         Fn::ImportValue:
           Fn::Sub: "${EnvironmentName}-VPCID"
+
+  JumpHost:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - JumpHostSecGroup
+    Properties:
+      KeyName: HighAvailabilityAppWebServers
+      ImageId: ami-02396cdd13e9a1257
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: true
+        DeleteOnTermination: true
+        Description: ENI for bastion host
+        DeviceIndex: '0'
+        GroupSet: 
+          - Ref: "JumpHostSecGroup"
+        SubnetId:
+          Fn::ImportValue:
+            Fn::Sub: "${EnvironmentName}-PUB1-SN"
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} Jump Host
+  
+  
 
 Outputs: 
 
