@@ -82,6 +82,12 @@ $ ./create.sh hawa-server hawa-server.yml hawa-server-parameters.json
 
 It is possible to ssh into the EC2 Web Server instances using a jump host. The jump host is another EC2 instance placed into one of the public subnets. The security group of the jump host allows incoming access from a configured IP to port 22 using a defined .pem file. Once connected via SSH to the jump host it is possible to connect with the jump host via SSH to the Web Server instances in the privat subnets, as the security groups allow instances in the private subnets to be accessed from within the same Virtual Private Cloud. Here the steps to connect to a EC2 Server Instance in the private subnets:
 
+To get the public IP adress of the jump host use the following line: 
+```
+aws cloudformation describe-stacks --stack-name hawa-server --query "Stacks[*].Outputs[*].{OutputKey: OutputKey, OutputValue: OutputValue, Description: Description}";
+```
+
+
 - Step 1: Grant rights on local machine to .pem file
 ```
 $ chmod 400 jumpHostKey.pem 

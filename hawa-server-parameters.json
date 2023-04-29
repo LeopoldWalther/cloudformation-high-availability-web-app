@@ -7,6 +7,11 @@
 	{
         "ParameterKey" : "S3BucketName",
         "ParameterValue" : "hawa-629476245943-bucket"
+    },
+
+	{
+        "ParameterKey" : "KeyPairName",
+        "ParameterValue" : "HighAvailabilityAppWebServers"
     }
 ]
 

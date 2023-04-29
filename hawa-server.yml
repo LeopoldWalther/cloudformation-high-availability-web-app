@@ -9,12 +9,18 @@ Parameters:
   # VPCs and so on.
 
     EnvironmentName:
-        Description: An environment name that will be prefixed to resource names
-        Type: String
+      Description: An environment name that will be prefixed to resource names
+      Type: String
 
     S3BucketName:
-        Description: The unique identifier of the bucket containing the data to serve the Web App
-        Type: String
+      Description: The unique identifier of the bucket containing the data to serve the Web App
+      Type: String
+
+    KeyPairName:
+      Description: Keypair for Linux bastion host
+      Type: AWS::EC2::KeyPair::KeyName
+      Default: HighAvailabilityAppWebServers
+
 
 Resources:
 
@@ -130,8 +136,8 @@ Resources:
           aws s3 cp s3://hawa-629476245943-bucket/website.zip .
           unzip -o website.zip
 
-      ImageId: ami-0729e439b6769d6ab
-      KeyName: HighAvailabilityAppWebServers
+      ImageId: ami-0263e4deb427da90e
+      KeyName: !Ref 'KeyPairName'
       IamInstanceProfile: !Ref WebAppIamProfile
       SecurityGroups:
       - Ref: WebServerSecGroup
@@ -210,7 +216,7 @@ Resources:
     DependsOn:
     - JumpHostSecGroup
     Properties:
-      KeyName: HighAvailabilityAppWebServers
+      KeyName: !Ref 'KeyPairName'
       ImageId: ami-02396cdd13e9a1257
       InstanceType: t2.micro
       NetworkInterfaces:
@@ -236,3 +242,9 @@ Outputs:
     Value: !Join [ "", [ 'http://', !GetAtt WebAppLoadBalancer.DNSName ]]
     Export:
         Name: !Sub ${EnvironmentName}-LoadBalancer-DNSName
+
+  JumpHostPublicIp:
+    Description: Jump Host Public IP
+    Value: !GetAtt JumpHost.PublicIp
+    Export:
+      Name: !Sub "${EnvironmentName}-JumpHostPublicIp"
