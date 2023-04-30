@@ -2,11 +2,8 @@ Description: >
     Leopold Walther:
     This template deploys a Web Application where requests are distributed by a Application Load Balancer to a target group of EC2 Servers in an Auto-Scaling Group.
 
+
 Parameters:
-  # Paramenters are entirely optional.
-  # but using them will make your cloudformation templates more reusable
-  # use them for things that may change over time, such as instance type,
-  # VPCs and so on.
 
     EnvironmentName:
       Description: An environment name that will be prefixed to resource names
@@ -137,11 +134,11 @@ Resources:
           unzip -o website.zip
 
       ImageId: ami-0263e4deb427da90e
-      KeyName: !Ref 'KeyPairName'
+      # KeyName: !Ref 'KeyPairName'
       IamInstanceProfile: !Ref WebAppIamProfile
       SecurityGroups:
       - Ref: WebServerSecGroup
-      InstanceType: t2.medium
+      InstanceType: t3.small
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
@@ -156,7 +153,7 @@ Resources:
       LaunchConfigurationName:
         Ref: WebAppLaunchConfig
       MinSize: '2'
-      MaxSize: '2'
+      MaxSize: '4'
       TargetGroupARNs:
       - Ref: WebAppTargetGroup
 
@@ -232,7 +229,6 @@ Resources:
       Tags:
       - Key: Name
         Value: !Sub ${EnvironmentName} Jump Host
-  
   
 
 Outputs: 
