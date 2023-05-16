@@ -6,7 +6,6 @@ This folder provides the starter code forthe "ND9991 - C2- Infrastructure as Cod
 - [Project Description](#project)
 - [Project Files](#files)
 - [How To Run](#run)
-- [Results](#results)
 - [Licensing, Authors, Acknowledgements](#licensing-authors-acknowledgements)
 
 ## Project Details<a name="project"></a>
@@ -134,11 +133,6 @@ $ ./stack_delete.sh hawa-server
 ```
 $ ./stack_delete.sh hawa-network
 ```
-
-
-## Results<a name="results"></a>
-
-...
 
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
