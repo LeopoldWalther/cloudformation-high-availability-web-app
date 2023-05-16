@@ -67,13 +67,13 @@ $ aws iam list-users
 
 - Step 5: Create the network stack for the High Availability Web App:
 ```
-$ ./create.sh hawa-network hawa-network.yml hawa-network-parameters.json
+$ ./stack_create.sh hawa-network hawa-network.yml hawa-network-parameters.json
 ```
 
 ### Deploy Servers
 
 ```
-$ ./create.sh hawa-server hawa-server.yml hawa-server-parameters.json
+$ ./stack_create.sh hawa-server hawa-server.yml hawa-server-parameters.json
 ```
 
 ### Inspect Servers
@@ -128,11 +128,11 @@ $ aws ec2 get-console-output --instance-id i-0ab9802bd29642468
 - Step 6: Delete stack:
 
 ```
-$ ./delete.sh hawa-server
+$ ./stack_delete.sh hawa-server
 ```
 
 ```
-$ ./delete.sh hawa-network
+$ ./stack_delete.sh hawa-network
 ```
 
 
